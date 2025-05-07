@@ -21,6 +21,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import MapScreen from './MapScreen';
 import { motion } from 'moti';
+import Svg, { Path } from 'react-native-svg';
 
 import welfareData from './HomeData/서울시 사회복지시설(청소년복지시설) 목록.json';
 import academyData from './HomeData/서울시 청소년방과후아카데미 시설현황정보.json';
@@ -382,12 +383,12 @@ const YouthnaviScreen = () => {
             onPress={() => openURL('https://youthnavi.net')}
           >
             <Image 
-              source={require('./assets/유스내비.jpg')}
+              source={require('./assets/youth.jpg')}
               style={styles.qrIcon}
               resizeMode="contain"
             />
             <Image 
-              source={require('./assets/사이트.png')}
+              source={require('./assets/site.png')}
               style={styles.cultureQrImage}
               resizeMode="contain"
             />
@@ -403,7 +404,7 @@ const YouthnaviScreen = () => {
               resizeMode="contain"
             />
             <Image 
-              source={require('./assets/앱스토어.png')}
+              source={require('./assets/appqr.png')}
               style={styles.cultureQrImage}
               resizeMode="contain"
             />
@@ -419,7 +420,7 @@ const YouthnaviScreen = () => {
               resizeMode="contain"
             />
             <Image 
-              source={require('./assets/구글플레이.png')}
+              source={require('./assets/googleqr.png')}
               style={styles.cultureQrImage}
               resizeMode="contain"
             />
@@ -605,7 +606,7 @@ const SecondScreen = ({ screenType, onBack, selectedItem, allNotices, allBanners
                   <Text style={styles.gridItemText}>재밌어 보이는 활동사진</Text>
                   <TouchableOpacity style={styles.gridItem}>
                     <Image 
-                      source={require('./assets/재밌는.jpg')}
+                      source={require('./assets/fun.jpg')}
                       style={styles.gridImage}
                       resizeMode="cover"
                     />
@@ -615,7 +616,7 @@ const SecondScreen = ({ screenType, onBack, selectedItem, allNotices, allBanners
                   <Text style={styles.gridItemText}>이벤트 사진</Text>
                   <TouchableOpacity style={styles.gridItem}>
                     <Image 
-                      source={require('./assets/이벤트.jpg')}
+                      source={require('./assets/event.jpg')}
                       style={styles.gridImage}
                       resizeMode="cover"
                     />
@@ -627,7 +628,7 @@ const SecondScreen = ({ screenType, onBack, selectedItem, allNotices, allBanners
                   <Text style={styles.gridItemText}>동아리 추천</Text>
                   <TouchableOpacity style={styles.gridItem}>
                     <Image 
-                      source={require('./assets/동아리.jpg')}
+                      source={require('./assets/club.jpg')}
                       style={styles.gridImage}
                       resizeMode="cover"
                     />
@@ -637,7 +638,7 @@ const SecondScreen = ({ screenType, onBack, selectedItem, allNotices, allBanners
                   <Text style={styles.gridItemText}>새로운 소식</Text>
                   <TouchableOpacity style={styles.gridItem}>
                     <Image 
-                      source={require('./assets/새로운.jpg')}
+                      source={require('./assets/new.jpg')}
                       style={styles.gridImage}
                       resizeMode="cover"
                     />
@@ -654,7 +655,7 @@ const SecondScreen = ({ screenType, onBack, selectedItem, allNotices, allBanners
               <Text style={styles.sectionTitle}>로고</Text>
               <View style={styles.logoGrid}>
                 <Image 
-                  source={require('./assets/꿈쓰.png')}
+                  source={require('./assets/dream.png')}
                   style={styles.logoImage}
                   resizeMode="contain"
                 />
@@ -919,6 +920,7 @@ const MainScreen = ({ onNavigateToSecondScreen, allNotices }) => {
   const [selectedTab, setSelectedTab] = useState('가맹점');
   const [expandedNotices, setExpandedNotices] = useState({});
   const [mapButtons, setMapButtons] = useState([]);
+  const navigation = useNavigation();
 
   // 초기 map위에 버튼 설정
   useEffect(() => {
@@ -992,6 +994,10 @@ const MainScreen = ({ onNavigateToSecondScreen, allNotices }) => {
     setMapButtons(prev => prev.filter(button => button.id !== buttonId));
   };
 
+  // Add current location button press handler
+  const handleCurrentLocationPress = () => {
+    navigation.navigate('Mark', { requestLocation: true });
+  };
 
   return (
     <View style={styles.container}>
@@ -1049,6 +1055,13 @@ const MainScreen = ({ onNavigateToSecondScreen, allNotices }) => {
 
           {/* 지도 영역 */}
           <View style={styles.mapContainer}>
+            {/* Add current location button */}
+            <TouchableOpacity 
+              style={styles.currentLocationButton}
+              onPress={handleCurrentLocationPress}
+            >
+              <LocationIcon />
+            </TouchableOpacity>
             <Image 
               source={require('./assets/map.png')}
               style={styles.mapImage}
@@ -1076,12 +1089,13 @@ const MainScreen = ({ onNavigateToSecondScreen, allNotices }) => {
           <View style={styles.scrollContent}>
             {/* 상단 그리드 */}
             <View style={styles.gridContainer}>
+            
               <View style={styles.gridRow}>
                 <View style={styles.gridItemContainer}>
                   <Text style={styles.gridItemText}>재밌어 보이는 활동사진</Text>
                   <TouchableOpacity style={styles.gridItem}>
                     <Image 
-                      source={require('./assets/재밌는.jpg')}
+                      source={require('./assets/fun.jpg')}
                       style={styles.gridImage}
                       resizeMode="cover"
                     />
@@ -1091,7 +1105,7 @@ const MainScreen = ({ onNavigateToSecondScreen, allNotices }) => {
                   <Text style={styles.gridItemText}>이벤트 사진</Text>
                   <TouchableOpacity style={styles.gridItem}>
                     <Image 
-                      source={require('./assets/이벤트.jpg')}
+                      source={require('./assets/event.jpg')}
                       style={styles.gridImage}
                       resizeMode="cover"
                     />
@@ -1103,7 +1117,7 @@ const MainScreen = ({ onNavigateToSecondScreen, allNotices }) => {
                   <Text style={styles.gridItemText}>동아리 추천</Text>
                   <TouchableOpacity style={styles.gridItem}>
                     <Image 
-                      source={require('./assets/동아리.jpg')}
+                      source={require('./assets/club.jpg')}
                       style={styles.gridImage}
                       resizeMode="cover"
                     />
@@ -1113,7 +1127,7 @@ const MainScreen = ({ onNavigateToSecondScreen, allNotices }) => {
                   <Text style={styles.gridItemText}>새로운 소식</Text>
                   <TouchableOpacity style={styles.gridItem}>
                     <Image 
-                      source={require('./assets/새로운.jpg')}
+                      source={require('./assets/new.jpg')}
                       style={styles.gridImage}
                       resizeMode="cover"
                     />
@@ -1186,7 +1200,6 @@ const MainScreen = ({ onNavigateToSecondScreen, allNotices }) => {
     </View>
   );
 };
-
 
 /**
  * 메인 앱 컴포넌트
@@ -1305,6 +1318,13 @@ const Home = ({ navigation }) => {
   );
 };
 
+// Add LocationIcon component
+const LocationIcon = () => (
+  <Svg width="24" height="24" viewBox="0 -960 960 960" fill="#666666">
+    <Path d="M480-360q56 0 101-27.5t71-72.5q-35-29-79-44.5T480-520q-49 0-93 15.5T308-460q26 45 71 72.5T480-360Zm0-200q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0 33 23.5 56.5T480-560Zm0 374q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z" />
+  </Svg>
+);
+
 // 스타일 정의
 const styles = StyleSheet.create({
   container: {
@@ -1390,11 +1410,49 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     alignSelf: 'center',
+    position: 'relative',
   },
   mapImage: {
     width: '120%',
     height: '120%',
     resizeMode: 'contain',
+  },
+  currentLocationButton: {
+    position: 'absolute',
+    left: 20,
+    top: 0,
+    width: 45,
+    height: 45,
+    borderRadius: 23,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  locationIconContainer: {
+    width: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  locationInnerCircle: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#666666',
+    position: 'absolute',
+  },
+  locationOuterCircle: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    borderWidth: 2,
+    borderColor: '#666666',
   },
   initialScreenContainer: {
     height: '100%',

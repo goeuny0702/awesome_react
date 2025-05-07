@@ -31,7 +31,7 @@ const IntroScreen = () => {
       <Animated.View style={[styles.introContainer, { opacity: fadeAnim }]}>
         <StatusBar hidden />
         <ImageBackground
-          source={require('./assets/꿈쓰.png')}
+          source={require('./assets/dream.png')}
           style={styles.backgroundImage}
           resizeMode="cover"
         />

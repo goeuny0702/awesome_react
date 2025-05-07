@@ -4,14 +4,22 @@ import { WebView } from 'react-native-webview';
 import Geolocation from '@react-native-community/geolocation';
 import storeData from './assets/store.json';
 
-const Mark = ({ navigation }) => {
+const Mark = ({ navigation, route }) => {
   const { width, height } = Dimensions.get('window');
   const mapHeight = height * 0.8;
   const [selectedPosition, setSelectedPosition] = useState(null);
   const [currentLocation, setCurrentLocation] = useState(null);
+  const webViewRef = React.useRef(null);
 
   useEffect(() => {
-    requestLocationPermission();
+    // Check if we're coming from Home screen with location request
+    if (route.params?.requestLocation) {
+      requestLocationPermission();
+    }
+  }, [route.params?.requestLocation]);
+
+  useEffect(() => {
+    // Initial location request removed from here
   }, []);
 
   const requestLocationPermission = async () => {
@@ -87,8 +95,6 @@ const Mark = ({ navigation }) => {
       }
     );
   };
-
-  const webViewRef = React.useRef(null);
 
   const onMessage = (event) => {
     const data = JSON.parse(event.nativeEvent.data);
