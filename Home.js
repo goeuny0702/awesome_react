@@ -23,7 +23,7 @@ import MapScreen from './MapScreen';
 import { motion } from 'moti';
 import Svg, { Path } from 'react-native-svg';
 
-import welfareData from './HomeData/서울시 사회복지시설(청소년복지시설) 목록.json';
+import welfareData from './assets/서울시 사회복지시설(청소년복지시설) 목록.json';
 import academyData from './HomeData/서울시 청소년방과후아카데미 시설현황정보.json';
 import libraryData from './HomeData/서울시 공공도서관 현황정보.json';
 
@@ -520,24 +520,184 @@ const BannerSlider = () => {
 /**
  * 지도 위의 버튼 컴포넌트
  */
-const MapButton = ({ x_location, y_location, color, text, onPress, id, width = 30, fontSize = 10 }) => (
-  <TouchableOpacity
-    key={id}
-    style={[
-      styles.mapButton,
-      {
-        position: 'absolute',
-        left: x_location,
-        top: y_location,
-        backgroundColor: color,
-        width: width,
-      }
-    ]}
-    onPress={onPress}
-  >
-    <Text style={[styles.mapButtonText, { fontSize: fontSize }]}>{text}</Text>
-  </TouchableOpacity>
-);
+const MapButton = ({ x_location, y_location, color, text, onPress, id, width = 30, fontSize = 10, textColor, selectedTab }) => {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  // 각 구별 동 목록 데이터
+  const dongsByDistrict = {
+    '강서구': ['신창동', '화곡동', '발산동', '우장산동', '가양동', '염창동', '등촌동', '마곡동', '공항동', '방화동', '내발산동', '외발산동', '가양1동', '가양2동', '가양3동', '화곡1동', '화곡2동', '화곡3동', '화곡4동', '화곡6동', '화곡8동', '화곡본동', '공진동', '오곡동', '오쇠동', '과해동', '개화동', '오공동'],
+    '양천구': ['신정동', '신월동', '목동', '신정1가', '신정2가', '신정3가', '신정4가', '신정6가', '신정7가', '신월1동', '신월2동', '신월3동', '신월4동', '신월5동', '신월6동', '신월7동', '목1동', '목2동', '목3동', '목4동', '목5동', '신정동'],
+    '영등포구': ['영등포동', '당산동', '문래동', '양평동', '신길동', '대림동', '양화동', '신길1동', '신길3동', '신길4동', '신길5동', '신길6동', '신길7동', '대림1동', '대림2동', '대림3동'],
+    '구로구': ['신도림동', '구로동', '가리봉동', '고척동', '개봉동', '오류동', '항동', '궁동', '온수동', '천왕동', '구로1동', '구로2동', '구로3동', '구로4동', '구로5동', '가리봉1동', '가리봉2동', '개봉1동', '개봉2동', '개봉3동', '고척1동', '고척2동', '오류1동', '오류2동', '천왕동', '항동'],
+    '금천구': ['가산동', '독산동', '시흥동', '독산1동', '독산2동', '독산3동', '독산4동', '시흥1동', '시흥2동', '시흥3동', '시흥4동', '시흥5동'],
+    '동작구': ['노량진동', '상도동', '흑석동', '사당동', '대방동', '신대방동', '동작동', '본동', '노량진1동', '노량진2동', '상도1동', '상도2동', '상도3동', '상도4동', '사당1동', '사당2동', '사당3동', '사당4동', '사당5동', '대방동', '신대방1동', '신대방2동'],
+    '관악구': ['봉천동', '신림동', '남현동', '인헌동', '중앙동', '청룡동', '낙성대동', '행운동', '청림동', '성현동', '신사동', '조원동', '미성동', '난곡동', '난향동', '서원동', '신원동', '서림동', '삼성동', '대학동', '은천동'],
+    '서초구': ['서초동', '방배동', '잠원동', '반포동', '양재동', '우면동', '원지동', '서초1동', '서초2동', '서초3동', '서초4동', '잠원동', '반포1동', '반포2동', '반포3동', '반포4동', '방배1동', '방배2동', '방배3동', '방배4동', '양재1동', '양재2동', '내곡동'],
+    '강남구': ['신사동', '압구정동', '논현동', '삼성동', '역삼동', '청담동', '대치동', '도곡동', '개포동', '일원동', '수서동', '세곡동', '논현1동', '논현2동', '삼성1동', '삼성2동', '역삼1동', '역삼2동', '대치1동', '대치2동', '대치4동', '도곡1동', '도곡2동', '개포1동', '개포2동', '개포4동', '일원1동', '일원2동', '일원본동', '수서동', '세곡동'],
+    '송파구': ['송파동', '석촌동', '삼전동', '가락동', '문정동', '거여동', '방이동', '오금동', '마천동', '풍납동', '잠실동', '잠실동', '석촌동', '삼전동', '가락본동', '가락1동', '가락2동', '문정1동', '문정2동', '장지동', '오금동', '거여1동', '거여2동', '마천1동', '마천2동', '방이1동', '방이2동', '오륜동', '잠실2동', '잠실3동', '잠실4동', '잠실6동', '잠실7동', '위례동'],
+    '강동구': ['강일동', '상일동', '명일동', '고덕동', '암사동', '천호동', '성내동', '길동', '둔촌동', '강일동', '상일동', '명일1동', '명일2동', '고덕1동', '고덕2동', '암사1동', '암사2동', '암사3동', '천호1동', '천호2동', '천호3동', '성내1동', '성내2동', '성내3동', '길동', '둔촌1동', '둔촌2동', '강동동'],
+    '노원구': ['월계동', '공릉동', '하계동', '상계동', '중계동', '월계1동', '월계2동', '월계3동', '공릉1동', '공릉2동', '하계1동', '하계2동', '중계본동', '중계1동', '중계2동', '중계4동', '상계1동', '상계2동', '상계3동', '상계4동', '상계5동', '상계6동', '상계7동', '상계8동', '상계9동', '상계10동'],
+    '도봉구': ['쌍문동', '방학동', '창동', '도봉동', '방학1동', '방학2동', '방학3동', '쌍문1동', '쌍문2동', '쌍문3동', '쌍문4동', '창1동', '창2동', '창3동', '창4동', '창5동', '도봉1동', '도봉2동'],
+    '은평구': ['녹번동', '불광동', '갈현동', '구산동', '대조동', '응암동', '신사동', '증산동', '수색동', '진관동', '역촌동', '불광1동', '불광2동', '갈현1동', '갈현2동', '구산동', '대조동', '응암1동', '응암2동', '응암3동', '역촌동', '신사1동', '신사2동', '증산동', '수색동', '진관동'],
+    '서대문구': ['충현동', '천연동', '신촌동', '연희동', '홍제동', '홍은동', '남가좌동', '북가좌동', '북아현동', '현저동', '천연동', '북아현동', '신촌동', '연희동', '홍제1동', '홍제2동', '홍제3동', '홍은1동', '홍은2동', '남가좌1동', '남가좌2동', '북가좌1동', '북가좌2동'],
+    '강북구': ['미아동', '번동', '수유동', '우이동', '인수동', '미아동', '삼양동', '송중동', '송천동', '삼각산동', '번1동', '번2동', '번3동', '수유1동', '수유2동', '수유3동', '우이동', '인수동'],
+    '성북구': ['성북동', '돈암동', '안암동', '동선동', '동소문동', '보문동', '정릉동', '길음동', '종암동', '석관동', '삼선동', '제기동', '월곡동', '장위동', '성북동', '삼선동', '동선동', '돈암1동', '돈암2동', '안암동', '보문동', '정릉1동', '정릉2동', '정릉3동', '정릉4동', '길음1동', '길음2동', '종암동', '월곡1동', '월곡2동', '장위1동', '장위2동', '장위3동', '석관동'],
+    '성동구': ['왕십리동', '마장동', '사근동', '행당동', '응봉동', '금호동', '옥수동', '성수동', '송정동', '용답동', '왕십리도선동', '왕십리2동', '마장동', '사근동', '행당1동', '행당2동', '응봉동', '금호1가동', '금호2-3가동', '금호4가동', '옥수동', '성수1가1동', '성수1가2동', '성수2가1동', '성수2가3동', '송정동', '용답동', '성수동2가'],
+    '중랑구': ['면목동', '상봉동', '중화동', '묵동', '망우동', '신내동', '면목본동', '면목2동', '면목3-8동', '면목4동', '면목5동', '면목7동', '상봉1동', '상봉2동', '중화1동', '중화2동', '묵1동', '묵2동', '망우본동', '망우3동', '신내1동', '신내2동'],
+    '광진구': ['중곡동', '능동', '구의동', '광장동', '자양동', '화양동', '군자동', '능동', '중곡1동', '중곡2동', '중곡3동', '중곡4동', '능동', '구의1동', '구의2동', '구의3동', '광장동', '자양1동', '자양2동', '자양3동', '자양4동', '화양동', '군자동'],
+    '동대문구': ['용신동', '제기동', '전농동', '답십리동', '장안동', '청량리동', '회기동', '휘경동', '이문동', '용두동', '신설동', '용신동', '제기동', '전농1동', '전농2동', '답십리1동', '답십리2동', '장안1동', '장안2동', '청량리동', '회기동', '휘경1동', '휘경2동', '이문1동', '이문2동'],
+    '종로구': ['청운효자동', '사직동', '삼청동', '부암동', '평창동', '무악동', '교남동', '가회동', '종로1가', '종로2가', '종로3가', '종로4가', '종로5가', '종로6가', '사직동', '삼청동', '부암동', '평창동', '무악동', '청운효자동', '혜화동', '창신1동', '창신2동', '창신3동', '숭인1동', '숭인2동', '이화동', '혜화동', '명륜3가동', '창신동', '숭인동'],
+    '중구': ['소공동', '회현동', '명동', '필동', '장충동', '광희동', '을지로동', '신당동', '다산동', '약수동', '청구동', '황학동', '중림동', '순화동', '남대문로', '광희동', '장충동', '남창동', '북창동', '태평로2가', '남산동', '회현동', '충무로', '명동', '청구동', '신당동', '다산동', '약수동', '신당5동', '신당1동', '황학동', '중림동', '필동', '광희동2가', '남대문로4가', '남대문로5가', '남산동1가', '남산동2가', '만리동2가', '명동1가', '명동2가', '을지로1가', '을지로2가', '을지로3가', '을지로6가', '을지로7가', '의주로1가', '인현동1가', '장충동1가', '장충동2가', '충무로1가', '충무로2가', '충무로3가', '충무로4가', '충무로5가', '태평로1가', '태평로2가', '필동1가', '필동2가', '회현동1가'],
+    '용산구': ['후암동', '용산동', '남영동', '원효로동', '효창동', '용문동', '이촌동', '보광동', '서빙고동', '이태원동', '한남동', '하왕십리동', '후암동', '용산2가동', '남영동', '원효로1동', '원효로2동', '효창동', '용문동', '이촌1동', '이촌2동', '보광동', '서빙고동', '이태원1동', '이태원2동', '한남동', '한강로동', '갈월동', '용산동2가', '용산동5가', '원효로1가', '원효로3가', '원효로4가', '청파동1가', '청파동2가', '청파동3가', '한강로1가', '한강로2가', '한강로3가'],
+    '마포구': ['공덕동', '아현동', '용강동', '대흥동', '신수동', '서교동', '합정동', '망원동', '성산동', '상암동', '도화동', '연남동', '서강동', '신정동', '공덕동', '아현동', '도화동', '용강동', '대흥동', '염리동', '신수동', '서교동', '합정동', '망원1동', '망원2동', '연남동', '성산1동', '성산2동', '상암동']
+  };
+
+  // 현재 선택된 구의 동 목록
+  const currentDongs = dongsByDistrict[text] || [];
+
+  const handlePress = () => {
+    if (selectedTab === '가맹점') {
+      setModalVisible(true);
+    } else {
+      onPress();
+    }
+  };
+
+  // 동 버튼 클릭 핸들러
+  const handleDongPress = (dong) => {
+    alert(`${text} ${dong}을(를) 선택하셨습니다.`);
+    // 여기에 동 선택 후 수행할 작업 추가
+  };
+
+  return (
+    <>
+      <TouchableOpacity
+        key={id}
+        style={[
+          styles.mapButton,
+          {
+            position: 'absolute',
+            left: x_location,
+            top: y_location,
+            backgroundColor: color,
+            width: width,
+          }
+        ]}
+        onPress={handlePress}
+      >
+        <Text style={[styles.mapButtonText, { fontSize: fontSize, color: textColor }]}>{text}</Text>
+      </TouchableOpacity>
+
+      {/* 가맹점 탭일 때만 모달 표시 */}
+      {selectedTab === '가맹점' && (
+        <Modal
+          visible={modalVisible}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.4)',
+          }}>
+            <View style={{
+              position: 'absolute',
+              top: '50%',
+              width: 400,
+              height: 600,
+              padding: 40,
+              alignItems: 'center',
+              backgroundColor: 'rgb(255, 255, 255)',
+              borderRadius: 10,
+              shadowColor: '#000',
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.15,
+              shadowRadius: 3,
+              elevation: 5,
+              transform: [{ translateY: -300 }],
+            }}>
+              <Text style={{
+                fontSize: 24,
+                fontWeight: 'bold',
+                marginBottom: 20,
+                textAlign: 'center',
+              }}>{text} 행정동 목록</Text>
+              
+              <Text style={{
+                fontSize: 16,
+                marginBottom: 20,
+                textAlign: 'center',
+              }}>
+                {text}의 행정동을 선택하세요.
+              </Text>
+              
+              <ScrollView 
+                style={{ 
+                  width: '100%',
+                  maxHeight: 400,
+                  marginBottom: 20
+                }}
+              >
+                <View style={{ 
+                  flexDirection: 'row', 
+                  flexWrap: 'wrap', 
+                  justifyContent: 'center',
+                  paddingHorizontal: 5
+                }}>
+                  {currentDongs.map((dong, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      style={{
+                        backgroundColor: color,
+                        paddingVertical: 10,
+                        paddingHorizontal: 5,
+                        margin: 4,
+                        borderRadius: 5,
+                        width: '30%',
+                        alignItems: 'center',
+                      }}
+                      onPress={() => handleDongPress(dong)}
+                    >
+                      <Text style={{
+                        color: '#000',
+                        fontWeight: 'bold',
+                        fontSize: 13,
+                      }}>{dong}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </ScrollView>
+              
+              <TouchableOpacity
+                style={{
+                  backgroundColor: '#007AFF',
+                  paddingVertical: 12,
+                  paddingHorizontal: 30,
+                  borderRadius: 5,
+                  alignItems: 'center',
+                  marginTop: 10,
+                }}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={{
+                  color: 'white',
+                  fontWeight: 'bold',
+                  fontSize: 16,
+                }}>닫기</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      )}
+    </>
+  );
+};
+
 
 /**
  * 두 번째 화면 컴포넌트
@@ -916,12 +1076,25 @@ const SearchBar = ({ onNavigateToSecondScreen }) => {
  * 메인 화면 컴포넌트
  * 통합검색 기능을 제공하는 메인 화면
  */
-const MainScreen = ({ onNavigateToSecondScreen, allNotices }) => {
+const MainScreen = ({ onNavigateToSecondScreen, allNotices, navigation }) => {
   const [selectedTab, setSelectedTab] = useState('가맹점');
   const [expandedNotices, setExpandedNotices] = useState({});
   const [mapButtons, setMapButtons] = useState([]);
-  const navigation = useNavigation();
 
+  const handleMapButtonPress = (button) => {
+    if (selectedTab === '복지시설') {
+      const facilityInDistrict = welfareData.DATA.find(f => f.구 === button.text);
+      if (facilityInDistrict) {
+        const centerLat = parseFloat(facilityInDistrict.Dlat);
+        const centerLng = parseFloat(facilityInDistrict.Dlng);
+        navigation.navigate('Social', {
+          district: button.text,
+          centerLat,
+          centerLng,
+        });
+      }
+    }
+  };
   // 초기 map위에 버튼 설정
   useEffect(() => {
     // 각 구의 고유 ID를 부여
@@ -945,13 +1118,12 @@ const MainScreen = ({ onNavigateToSecondScreen, allNotices }) => {
       { id: '17', x: 300, y: 110, color: '#c7e643', name: "중랑구" },
       { id: '18', x: 113, y: 150, color: '#95e4fb', name: "마포구" },
       { id: '19', x: 185, y: 143, color: '#96e3fb', name: "중구" },
-      { id: '20', x: 230, y: 5, color: '#fef5b6', name: "도봉구"},
-      { id: '21', x: 220, y: 45, color: '#fff7b6', name: "강북구"},
-      { id: '22', x: 220, y: 100, color: '#ffee86', name: "성북구"},
-      { id: '23', x: 230, y: 5, color: '#fef5b6', name: "종로구"},
-      { id: '24', x: 130, y: 80, color: '#77dbfb', name: "은평구"},
-      { id: '25', x: 142, y: 132, color: '#95e5fa', name: "서대문구", fontSize: 8},
-      { id: '26', x: 170, y: 110, color: '#93e3f9', name: "종로구"},
+      { id: '20', x: 220, y: 45, color: '#fff7b6', name: "강북구"},
+      { id: '21', x: 220, y: 100, color: '#ffee86', name: "성북구"},
+      { id: '22', x: 230, y: 5, color: '#fef5b6', name: "도봉구"},
+      { id: '23', x: 130, y: 80, color: '#77dbfb', name: "은평구"},
+      { id: '24', x: 142, y: 132, color: '#95e5fa', name: "서대문구", fontSize: 8},
+      { id: '25', x: 170, y: 110, color: '#93e3f9', name: "종로구"},
 
     ]
       
@@ -993,11 +1165,17 @@ const MainScreen = ({ onNavigateToSecondScreen, allNotices }) => {
   const removeMapButton = (buttonId) => {
     setMapButtons(prev => prev.filter(button => button.id !== buttonId));
   };
-
+  
   // Add current location button press handler
   const handleCurrentLocationPress = () => {
     navigation.navigate('Mark', { requestLocation: true });
   };
+
+  // 모달창 닫기 함수
+  const closeModal = () => {
+    setDistrictModal(false);
+  };
+
 
   return (
     <View style={styles.container}>
@@ -1010,23 +1188,48 @@ const MainScreen = ({ onNavigateToSecondScreen, allNotices }) => {
           {/* 상단 여백 */}
           <View style={styles.topSpace} />
           
-          {/* 검색 영역 */}
-          <View style={styles.searchSection}>
-            <View style={styles.searchInputContainer}>
-              <TextInput
-                style={styles.searchInput}
-                placeholder="검색어를 입력하세요"
-              />
-              <TouchableOpacity 
-                style={styles.searchButton}
-              >
-                <Text style={styles.searchButtonText}>검색</Text>
-              </TouchableOpacity>
-            </View>
+          {/* 급식카드 가맹점 제목 */}
+          <View style={styles.titleContainer}>
+            <Text style={styles.titleText}>급식카드 가맹점 지도</Text>
           </View>
-
-          {/* 탭 메뉴 */}
-          <View style={styles.tabContainer}>
+          
+          {/* 지도 영역 */}
+          <View style={styles.mapContainer}>
+            {/* Add current location button */}
+            <TouchableOpacity 
+              style={styles.currentLocationButton}
+              onPress={handleCurrentLocationPress}
+            >
+              <LocationIcon />
+            </TouchableOpacity>
+            <Image 
+              source={
+                selectedTab === '복지시설'
+                  ? require('./assets/welfare1.png')
+                  : require('./assets/map.png')
+              }
+              style={styles.mapImage}
+              resizeMode="contain"
+            />
+            {mapButtons.map(button => (
+              <MapButton
+                key={button.id}
+                id={button.id}
+                x_location={button.x_location}
+                y_location={button.y_location}
+                color={button.color}
+                text={button.text}
+                width={button.width}
+                fontSize={button.fontSize}
+                textColor="#000"
+                selectedTab={selectedTab}
+                onPress={() => handleMapButtonPress(button)}
+              />
+            ))}
+          </View>
+          
+          {/* 탭 메뉴 - 지도 아래로 이동 */}
+          <View style={[styles.tabContainer, { marginTop: 15, marginBottom: 15 }]}>
             <TouchableOpacity 
               style={[styles.tabButton, selectedTab === '가맹점' && styles.selectedTab]}
               onPress={() => setSelectedTab('가맹점')}
@@ -1053,43 +1256,43 @@ const MainScreen = ({ onNavigateToSecondScreen, allNotices }) => {
             </TouchableOpacity>
           </View>
 
-          {/* 지도 영역 */}
-          <View style={styles.mapContainer}>
-            {/* Add current location button */}
-            <TouchableOpacity 
-              style={styles.currentLocationButton}
-              onPress={handleCurrentLocationPress}
-            >
-              <LocationIcon />
-            </TouchableOpacity>
-            <Image 
-              source={require('./assets/map.png')}
-              style={styles.mapImage}
-              resizeMode="contain"
-            />
-            {mapButtons.map(button => (
-              <MapButton
-                key={button.id}
-                id={button.id}
-                x_location={button.x_location}
-                y_location={button.y_location}
-                color={button.color}
-                text={button.text}
-                width={button.width}
-                fontSize={button.fontSize}
-                onPress={() => handleMapButtonPress(button)}
-              />
-            ))}
-          </View>
-
           {/* 배너 슬라이더 */}
           <BannerSlider />
 
           {/* 스크롤링 컨텐츠 */}
           <View style={styles.scrollContent}>
-            {/* 상단 그리드 */}
+            {/* 공지사항 */}
+            <View style={styles.noticeContainer}>
+              <View style={styles.noticeHeader}>
+                <Text style={styles.noticeTitle}>공지사항</Text>
+                <TouchableOpacity onPress={() => onNavigateToSecondScreen('allNotices')}>
+                  <Text style={styles.moreButton}>더보기</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.noticeList}>
+                {allNotices.slice(0, 3).map((notice, index) => (
+                  <TouchableOpacity 
+                    key={notice.id}
+                    style={styles.noticeItem}
+                    onPress={() => toggleNotice(index)}
+                  >
+                    <View style={styles.noticeItemHeader}>
+                      <View style={styles.noticeItemLeft}>
+                        <Text style={styles.noticeItemTitle}>{notice.title}</Text>
+                        <Text style={styles.noticeItemDate}>{notice.date}</Text>
+                      </View>
+                      <Text style={styles.expandIcon}>{expandedNotices[index] ? '−' : '+'}</Text>
+                    </View>
+                    {expandedNotices[index] && (
+                      <Text style={styles.noticeItemContent}>{notice.content}</Text>
+                    )}
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            {/* 그리드 영역 */}
             <View style={styles.gridContainer}>
-            
               <View style={styles.gridRow}>
                 <View style={styles.gridItemContainer}>
                   <Text style={styles.gridItemText}>재밌어 보이는 활동사진</Text>
@@ -1135,71 +1338,13 @@ const MainScreen = ({ onNavigateToSecondScreen, allNotices }) => {
                 </View>
               </View>
             </View>
-
-            {/* 공지사항 */}
-            <View style={styles.noticeContainer}>
-              <View style={styles.noticeHeader}>
-                <Text style={styles.noticeTitle}>공지사항</Text>
-                <TouchableOpacity onPress={() => onNavigateToSecondScreen('allNotices')}>
-                  <Text style={styles.moreButton}>더보기</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={styles.noticeList}>
-                <TouchableOpacity 
-                  style={styles.noticeItem}
-                  onPress={() => toggleNotice(0)}
-                >
-                  <View style={styles.noticeItemHeader}>
-                    <View style={styles.noticeItemLeft}>
-                      <Text style={styles.noticeItemTitle}>시스템 점검 안내</Text>
-                      <Text style={styles.noticeItemDate}>2024.03.10</Text>
-                    </View>
-                    <Text style={styles.expandIcon}>{expandedNotices[0] ? '−' : '+'}</Text>
-                  </View>
-                  {expandedNotices[0] && (
-                    <Text style={styles.noticeItemContent}>2024년 3월 15일 새벽 2시부터 4시까지 시스템 점검이 있을 예정입니다.</Text>
-                  )}
-                </TouchableOpacity>
-
-                <TouchableOpacity 
-                  style={styles.noticeItem}
-                  onPress={() => toggleNotice(1)}
-                >
-                  <View style={styles.noticeItemHeader}>
-                    <View style={styles.noticeItemLeft}>
-                      <Text style={styles.noticeItemTitle}>신규 서비스 오픈</Text>
-                      <Text style={styles.noticeItemDate}>2024.03.08</Text>
-                    </View>
-                    <Text style={styles.expandIcon}>{expandedNotices[1] ? '−' : '+'}</Text>
-                  </View>
-                  {expandedNotices[1] && (
-                    <Text style={styles.noticeItemContent}>더욱 편리한 서비스를 위해 새로운 기능이 추가되었습니다.</Text>
-                  )}
-                </TouchableOpacity>
-
-                <TouchableOpacity 
-                  style={styles.noticeItem}
-                  onPress={() => toggleNotice(2)}
-                >
-                  <View style={styles.noticeItemHeader}>
-                    <View style={styles.noticeItemLeft}>
-                      <Text style={styles.noticeItemTitle}>이용약관 개정 안내</Text>
-                      <Text style={styles.noticeItemDate}>2024.03.05</Text>
-                    </View>
-                    <Text style={styles.expandIcon}>{expandedNotices[2] ? '−' : '+'}</Text>
-                  </View>
-                  {expandedNotices[2] && (
-                    <Text style={styles.noticeItemContent}>서비스 이용약관이 개정되었습니다. 변경된 내용을 확인해 주시기 바랍니다.</Text>
-                  )}
-                </TouchableOpacity>
-              </View>
-            </View>
           </View>
         </View>
       </ScrollView>
     </View>
   );
 };
+
 
 /**
  * 메인 앱 컴포넌트
@@ -1294,6 +1439,7 @@ const Home = ({ navigation }) => {
         <MainScreen 
           onNavigateToSecondScreen={handleNavigateToSecondScreen}
           allNotices={allNotices}
+          navigation={navigation}
         />
       ) : (
         <SecondScreen 
@@ -1318,7 +1464,6 @@ const Home = ({ navigation }) => {
   );
 };
 
-// Add LocationIcon component
 const LocationIcon = () => (
   <Svg width="24" height="24" viewBox="0 -960 960 960" fill="#666666">
     <Path d="M480-360q56 0 101-27.5t71-72.5q-35-29-79-44.5T480-520q-49 0-93 15.5T308-460q26 45 71 72.5T480-360Zm0-200q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0 33 23.5 56.5T480-560Zm0 374q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z" />
@@ -1433,26 +1578,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-  },
-  locationIconContainer: {
-    width: 24,
-    height: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  locationInnerCircle: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#666666',
-    position: 'absolute',
-  },
-  locationOuterCircle: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    borderWidth: 2,
-    borderColor: '#666666',
   },
   initialScreenContainer: {
     height: '100%',
@@ -1959,6 +2084,12 @@ const styles = StyleSheet.create({
   mapButtonText: {
     fontSize: 10,
     color: '#000',
+    textAlign: 'center',
+  },
+
+  titleText: {
+    fontSize: 30,
+    fontWeight: 'bold',
     textAlign: 'center',
   },
 });
