@@ -521,6 +521,7 @@ const BannerSlider = () => {
  * 지도 위의 버튼 컴포넌트
  */
 const MapButton = ({ x_location, y_location, color, text, onPress, id, width = 30, fontSize = 10, textColor, selectedTab }) => {
+  const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
 
   // 각 구별 동 목록 데이터
@@ -565,9 +566,13 @@ const MapButton = ({ x_location, y_location, color, text, onPress, id, width = 3
 
   // 동 버튼 클릭 핸들러
   const handleDongPress = (dong) => {
-    alert(`${text} ${dong}을(를) 선택하셨습니다.`);
-    // 여기에 동 선택 후 수행할 작업 추가
+    setModalVisible(false);
+    navigation.navigate('Mark', {
+      selectedGu: text.trim(),   // text는 MapButton의 구 이름
+      selectedDong: dong.trim(), // 클릭한 동 이름
+    });
   };
+  
 
   return (
     <>
@@ -1080,6 +1085,8 @@ const MainScreen = ({ onNavigateToSecondScreen, allNotices, navigation }) => {
   const [selectedTab, setSelectedTab] = useState('가맹점');
   const [expandedNotices, setExpandedNotices] = useState({});
   const [mapButtons, setMapButtons] = useState([]);
+  const [selectedGu, setSelectedGu] = useState('');
+  const [selectedDong, setSelectedDong] = useState('');
 
   const handleMapButtonPress = (button) => {
     if (selectedTab === '복지시설') {
@@ -1166,10 +1173,14 @@ const MainScreen = ({ onNavigateToSecondScreen, allNotices, navigation }) => {
     setMapButtons(prev => prev.filter(button => button.id !== buttonId));
   };
   
-  // Add current location button press handler
   const handleCurrentLocationPress = () => {
-    navigation.navigate('Mark', { requestLocation: true });
+    navigation.navigate('Mark', {
+      requestLocation: true,
+      selectedGu: selectedGu?.trim(),    // 선택된 구
+      selectedDong: selectedDong?.trim() // 선택된 동
+    });
   };
+  
 
   // 모달창 닫기 함수
   const closeModal = () => {
@@ -1354,6 +1365,7 @@ const Home = ({ navigation }) => {
   const [currentScreen, setCurrentScreen] = useState('main');
   const [screenType, setScreenType] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
+  
   
   // 공지사항 데이터
   const allNotices = [

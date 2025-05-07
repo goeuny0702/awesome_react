@@ -10,6 +10,8 @@ const Mark = ({ navigation, route }) => {
   const [selectedPosition, setSelectedPosition] = useState(null);
   const [currentLocation, setCurrentLocation] = useState(null);
   const webViewRef = React.useRef(null);
+  const { selectedGu, selectedDong } = route.params || {};
+
 
   useEffect(() => {
     // Check if we're coming from Home screen with location request
@@ -109,6 +111,25 @@ const Mark = ({ navigation, route }) => {
       alert(data.message);
     }
   };
+
+  const filteredStores = selectedGu && selectedDong
+    ? {
+        stores: storeData.stores.filter(store =>
+          store.구.replace(/\s/g, '') === selectedGu.replace(/\s/g, '') &&
+          store.동.replace(/\s/g, '') === selectedDong.replace(/\s/g, '')
+        )
+      }
+    : storeData;
+
+
+  let initialLat = 37.516826;
+  let initialLng = 127.0206567;
+  
+  if (filteredStores.stores.length > 0) {
+    initialLat = filteredStores.stores[0].lat;
+    initialLng = filteredStores.stores[0].lng;
+  }  
+
 
   const mapHtml = `
     <!DOCTYPE html>
@@ -246,12 +267,13 @@ const Mark = ({ navigation, route }) => {
       <script>
         var isDraggingOverlay = false;
         var justFinishedDragging = false;
-        var storeData = ${JSON.stringify(storeData)};
+        var storeData = ${JSON.stringify(filteredStores)};
+
         var mapContainer = document.querySelector('.mapContainer');
         var mapElement = document.querySelector('.map');
         var currentLocationMarker = null;
 
-        var mapCenter = new kakao.maps.LatLng(37.516826, 127.0206567);
+        var mapCenter = new kakao.maps.LatLng(${initialLat}, ${initialLng});
         var mapOption = {
           center: mapCenter,
           level: 3,
