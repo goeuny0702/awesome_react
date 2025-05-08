@@ -351,7 +351,7 @@ const Sub = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>로드뷰</Text>
+      <Text style={styles.text}>지도</Text>
       <View style={[styles.mapContainer, { height: mapHeight }]}>
         <WebView
           source={{ html: mapHtml }}
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    margin: 20,
+    marginTop: 20,
   },
   mapContainer: {
     width: '100%',
