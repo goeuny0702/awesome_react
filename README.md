@@ -1,97 +1,17 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
-
-# Getting Started
-
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
-
-## Step 1: Start Metro
-
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
-
-To start the Metro dev server, run the following command from the root of your React Native project:
-
-```sh
-# Using npm
-npm start
-
-# OR using Yarn
-yarn start
-```
-
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
-
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+![꿈쓰_1](https://github.com/user-attachments/assets/b182b600-c603-418f-a289-512dc9bee110)
+![꿈쓰_2](https://github.com/user-attachments/assets/c78fd375-a2f7-4ef4-a2ba-8408dadfbef6)
+![꿈쓰_3](https://github.com/user-attachments/assets/346023b4-0e9c-4267-8b16-563a58968e9e)
+![꿈쓰_4](https://github.com/user-attachments/assets/a6755a22-f727-4c46-8e90-0565a5175f9d)
+![꿈쓰_5](https://github.com/user-attachments/assets/08bda151-820c-4582-996e-ced9f5c6a121)
+![꿈쓰_6](https://github.com/user-attachments/assets/3490a738-abfe-4283-a9f9-a48d3d82ed73)
+![꿈쓰_7](https://github.com/user-attachments/assets/b3515cba-a1e7-496f-8381-a680f72fc4f1)
+![꿈쓰_8](https://github.com/user-attachments/assets/dd8f8d7a-359f-43a0-bfa5-ef288f6b9d5d)
+![꿈쓰_9](https://github.com/user-attachments/assets/718842bc-5ae5-4d39-985b-ece2ffc93d31)
+![꿈쓰_10](https://github.com/user-attachments/assets/bb16be61-742c-4bb9-8c32-92d58819fb50)
+![꿈쓰_11](https://github.com/user-attachments/assets/64eb12b0-9e9b-42f4-8ffa-3496a688bc9a)
+![꿈쓰_12](https://github.com/user-attachments/assets/0448d034-462c-4474-ae03-6068d4ce8188)
+![꿈쓰_13](https://github.com/user-attachments/assets/8b132e9e-08e6-421f-b901-88af5d7000af)
+![꿈쓰_14](https://github.com/user-attachments/assets/f6703077-686d-4c57-b85a-874e4e2b6655)
+![꿈쓰_15](https://github.com/user-attachments/assets/bb6813aa-dc07-418f-ad8f-d7fb3594c936)
+![꿈쓰_16](https://github.com/user-attachments/assets/bd9bfa5b-b89e-4f4b-aefa-807bff909ed0)
+![꿈쓰_17](https://github.com/user-attachments/assets/1aff0bc1-0c72-4cad-a50c-d0961cd6a437)
